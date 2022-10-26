@@ -19,21 +19,22 @@ public class Main {
             //System.out.println("donations.db already exists");
             //System.out.println(checkFileExistence.exists());
         }
-
-        SelectCheckData selectCheck = new SelectCheckData();
-        //selectCheck.setTable("checkDonations");
-        selectCheck.setTable("cashDonations");
+        SelectData selectCheck = new SelectData();
+        //SelectCheckData selectCheck = new SelectCheckData();
+        selectCheck.setTable("checkDonations");
+        //selectCheck.setTable("cashDonations");
+        //selectCheck.setTable("flightInfo");
         //selectCheck.setFirstName("John");
         //selectCheck.setLastName("Hammond");
         //selectCheck.setFirstName("Samy");
         //selectCheck.setLastName("Mitnick");
         //selectCheck.setCheckNumber("4321");
-        selectCheck.setDonationAmount(50);
+        //selectCheck.setDonationAmount(50);
 
-        selectCheck.selectDonationAmount( 2);
-        //selectCheck.selectByName("checkDonations");
-        //selectCheck.printAllNames("checkDonations");
-        //selectCheck.selectDateRange("checkDonations", "2022-09-28", "now");
-        //selectCheck.selectByCheckNumber("checkDonations", "1234");
+        //selectCheck.selectDonationAmount( 2);
+        //selectCheck.selectByName();
+        //selectCheck.printAllNames();
+        //selectCheck.selectDateRange("2022-09-28", "now");
+        //selectCheck.selectByCheckNumber();
     }
 }

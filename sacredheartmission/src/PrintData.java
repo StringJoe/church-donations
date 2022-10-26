@@ -39,9 +39,9 @@ public class PrintData {
 
         try {
             // print out a header so values can be lined up properly
-            System.out.println("----------------------------------------------------------------------------------------------");
+            System.out.println("----------------------------------------------------");
             System.out.printf("%-10s%-20s%s", "ID", "Date", "Amount Donated\n");
-            System.out.println("----------------------------------------------------------------------------------------------");
+            System.out.println("----------------------------------------------------");
             while(rs.next()) {
                 // create variables to hold data so it's easier to format in print statement
                 id = rs.getInt("id");
@@ -50,7 +50,7 @@ public class PrintData {
 
                 // print the formatted data
                 System.out.printf("%-10s%-20s$%s\n", id, date, donationAmount);
-                System.out.println("----------------------------------------------------------------------------------------------");
+                System.out.println("----------------------------------------------------");
             }
 
         } catch (SQLException e) {

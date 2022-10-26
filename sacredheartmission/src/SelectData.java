@@ -1,13 +1,13 @@
 import java.sql.*;
 
-public class SelectCheckData {
+public class SelectData {
     private String databaseName = "jdbc:sqlite:.\\donations.db";
     private String firstName, lastName, checkNumber, userQuery, table;
     private double donationAmount;
 
     private PrintData printCheckResults = new PrintData();
 
-    public SelectCheckData() {
+    public SelectData() {
         firstName = null;
         lastName = null;
         checkNumber = null;
@@ -83,23 +83,25 @@ public class SelectCheckData {
     // give the user the option to print out all the names table
     public void printAllNames() {
         String fullName = "";
+        String id = "";
 
         try {
             // create connection to the database and then get user query
             Connection conn = DriverManager.getConnection(databaseName);
             Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery(String.format("SELECT firstName, lastName FROM %s", table));
+            ResultSet rs = statement.executeQuery(String.format("SELECT id, firstName, lastName FROM %s", table));
             // print out a header so values can be lined up properly
-            System.out.println("------------------");
-            System.out.printf("%11s", "Name\n");
-            System.out.println("------------------");
+            System.out.println("---------------------------------");
+            System.out.printf("%-10s%s","ID", "Name\n");
+            System.out.println("---------------------------------");
             while (rs.next()) {
                 // create variables to hold data so it's easier to format in print statement
                 fullName = rs.getString("firstName") + " " + rs.getString("lastName");
+                id = rs.getString("id");
 
                 // print the formatted data
-                System.out.printf("%s\n", fullName);
-                System.out.println("------------------");
+                System.out.printf("%-10s%s\n", id, fullName);
+                System.out.println("---------------------------------");
             }
 
         } catch (SQLException e) {
@@ -116,7 +118,7 @@ public class SelectCheckData {
 
     // select donation amount if it's equal to, less than, or greater than amount given
     public void selectDonationAmount(int greaterLessEqual) {
-        userQuery = String.format("SELECT * FROM %s WHERE donationAmount ", table);
+        //userQuery = String.format("SELECT * FROM %s WHERE donationAmount ", table);
 
         // check if how the user wants to compare amounts and then select by that value
         if(greaterLessEqual == 0) {
@@ -144,7 +146,7 @@ public class SelectCheckData {
             ResultSet queryResults = statement.executeQuery(userQuery);
 
             // pass results from user query to print function then close connection
-            System.out.printf("%55s\n", "Retrieving by " + message);
+            System.out.printf("%s\n", "Retrieving by " + message);
             if(table.equals("checkDonations")){
                 printCheckResults.printCheckResults(queryResults);
             }
