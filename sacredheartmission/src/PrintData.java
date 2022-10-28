@@ -2,12 +2,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class PrintData {
-    public void printCheckResults(ResultSet rs) {
+    public static String printCheckResults(ResultSet rs) {
         int id = 0;
         String fullName = "";
         String date = "";
         String checkNumber = "";
         double donationAmount = 0;
+        String checkData = "";
 
         try {
             // print out a header so values can be lined up properly
@@ -23,6 +24,7 @@ public class PrintData {
                 donationAmount = rs.getInt("donationAmount");
 
                 // print the formatted data
+                checkData += String.format("%-10s%-20s%-20s%-20s$%s\n", id,  fullName, date, checkNumber, donationAmount);
                 System.out.printf("%-10s%-20s%-20s%-20s$%s\n", id,  fullName, date, checkNumber, donationAmount);
                 System.out.println("----------------------------------------------------------------------------------------------");
             }
@@ -30,12 +32,14 @@ public class PrintData {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        return checkData;
     }
 
-    public void printCashResults(ResultSet rs) {
+    public static String printCashResults(ResultSet rs) {
         int id = 0;
         String date = "";
         double donationAmount = 0;
+        String cashData = "";
 
         try {
             // print out a header so values can be lined up properly
@@ -49,6 +53,7 @@ public class PrintData {
                 donationAmount = rs.getInt("donationAmount");
 
                 // print the formatted data
+                cashData += String.format("%-10s%-20s$%s\n", id, date, donationAmount);
                 System.out.printf("%-10s%-20s$%s\n", id, date, donationAmount);
                 System.out.println("----------------------------------------------------");
             }
@@ -56,5 +61,6 @@ public class PrintData {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        return cashData;
     }
 }

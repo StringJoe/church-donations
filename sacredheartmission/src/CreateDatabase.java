@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class CreateDatabase {
-    public void makeDatabase() {
+    public static void makeDatabase() {
         // try to make connection to database
         // and create file if it does not exist
         try {
@@ -17,7 +17,7 @@ public class CreateDatabase {
                     e.getMessage());
         }
     }
-    public void createTables() {
+    public static void createTables() {
         try {
             // create the connection to the database and
             // create statement to execute commands

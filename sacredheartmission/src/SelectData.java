@@ -5,8 +5,6 @@ public class SelectData {
     private String firstName, lastName, checkNumber, userQuery, table;
     private double donationAmount;
 
-    private PrintData printCheckResults = new PrintData();
-
     public SelectData() {
         firstName = null;
         lastName = null;
@@ -54,7 +52,7 @@ public class SelectData {
             userQuery += String.format(" AND checkNumber = '%s'", checkNumber);
         }
 
-        createDatabaseConnection(userQuery, "Date Range");
+        createDatabaseConnection("Date Range");
     }
 
     // select by name
@@ -76,7 +74,7 @@ public class SelectData {
             userQuery = String.format("SELECT * FROM %s;", table);
         }
 
-        createDatabaseConnection(userQuery, "Name");
+        createDatabaseConnection("Name");
 
     }
 
@@ -113,7 +111,7 @@ public class SelectData {
     public void selectByCheckNumber() {
         userQuery = String.format("SELECT * FROM %s WHERE checkNumber = \"%s\"", table, checkNumber);
 
-        createDatabaseConnection(userQuery, "Check #");
+        createDatabaseConnection("Check #");
     }
 
     // select donation amount if it's equal to, less than, or greater than amount given
@@ -134,10 +132,10 @@ public class SelectData {
             userQuery = String.format("SELECT * FROM %s", table);
         }
 
-        createDatabaseConnection(userQuery, "Donation Amount");
+        createDatabaseConnection("Donation Amount");
     }
 
-    public void createDatabaseConnection(String query, String message) {
+    public void createDatabaseConnection(String message) {
         // get the query results and pass it into printResults
         try {
             // create connection to the database and then get user query
@@ -148,10 +146,10 @@ public class SelectData {
             // pass results from user query to print function then close connection
             System.out.printf("%s\n", "Retrieving by " + message);
             if(table.equals("checkDonations")){
-                printCheckResults.printCheckResults(queryResults);
+                PrintData.printCheckResults(queryResults);
             }
             else if(table.equals("cashDonations")){
-                printCheckResults.printCashResults(queryResults);
+                PrintData.printCashResults(queryResults);
             }
             else if(table.equals("flightInfo")) {
 
