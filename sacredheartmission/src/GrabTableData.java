@@ -1,9 +1,9 @@
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class GrabTableData {
+
     public static LinkedHashMap<String, ArrayList<String>> grabTableData() {
         // create hash map to hold table and column data
         LinkedHashMap<String, ArrayList<String>> tablesAndColumns = new LinkedHashMap<String, ArrayList<String>>();
@@ -25,7 +25,6 @@ public class GrabTableData {
             while(tableData.next()){
                 tableList.add(tableData.getString(1));
             }
-
 
             // loop through the tableList array and grab the metadata from it
             for(String table: tableList) {

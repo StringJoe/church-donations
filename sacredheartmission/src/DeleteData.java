@@ -2,7 +2,7 @@ import java.sql.*;
 
 public class DeleteData {
     private int id;
-    private String table, userQuery, selectQuery, deletedData;
+    private String table, userQuery, selectQuery, deletedData, database;
 
     // set the public id for deleting data
     public void setId(int id) {
@@ -11,6 +11,15 @@ public class DeleteData {
 
     public int getId() {
         return id;
+    }
+
+    // get the database being queried
+    public void setDatabase(String database) {
+        this.database = database;
+    }
+
+    public String getDatabase() {
+        return database;
     }
 
     // set the table to table user wants to delete data from
@@ -32,8 +41,8 @@ public class DeleteData {
     }
 
     // select the data and store it before deleting it
-    public void setSelectQuery(String table, int id) {
-        this.selectQuery = String.format("SELECT * FROM %s WHERE id = %d", table, id);
+    public void setSelectQuery(String table) {
+        this.selectQuery = String.format("SELECT * FROM %s WHERE id = %d", table, getId());
     }
 
     public String getSelectQuery() {
@@ -50,11 +59,12 @@ public class DeleteData {
     }
 
     // create constructor for user to delete data with
-    public DeleteData(int id, String table) {
+    public DeleteData(int id, String table, String database) {
         setId(id);
         setTable(table);
         setUserQuery(table, id);
-        setSelectQuery(table, id);
+        setSelectQuery(table);
+        setDatabase(database);
     }
 
     public void deleteData() {
@@ -63,7 +73,7 @@ public class DeleteData {
 
         try {
             // create the connection and sql statement, then execute the query
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:.\\donations.db");
+            Connection conn = DriverManager.getConnection("jdbc:sqlite:.\\" + getDatabase());
             Statement statement = conn.createStatement();
             ResultSet deleteResults = statement.executeQuery(getSelectQuery());
 

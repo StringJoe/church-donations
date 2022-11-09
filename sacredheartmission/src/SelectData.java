@@ -1,171 +1,182 @@
 import java.sql.*;
+import java.util.ArrayList;
 
 public class SelectData {
-    private String databaseName = "jdbc:sqlite:.\\donations.db";
-    private String firstName, lastName, checkNumber, userQuery, table;
-    private double donationAmount;
+    private String database, userQuery, table, queriedData;
+    private ArrayList<String> userInput = new ArrayList<String>();
+    private ArrayList<String> comparisonOperator = new ArrayList<String>();
+    private ArrayList<String> chosenColumns = new ArrayList<String>();
 
-    public SelectData() {
-        firstName = null;
-        lastName = null;
-        checkNumber = null;
-        userQuery = null;
-        donationAmount = 0;
+    // get the database from the user
+    public void setDatabase(String database) {
+        this.database = database;
     }
 
-    // set the variables to appropriate values
-    public void setFirstName (String first) {
-        this.firstName = first;
+    public String getDatabase() {
+        return database;
     }
 
-    public void setLastName(String last) {
-        this.lastName = last;
+    // set the table to table user wants to retrieve data from
+    public void setTable(String table) {
+        this.table = table;
     }
 
-    public void setCheckNumber (String checkNumber) {
-        this.checkNumber = checkNumber;
+    public String getTable() {
+        return table;
     }
 
-    public void setDonationAmount (double donationAmount) {
-        this.donationAmount = donationAmount;
+    // get the sql query from user
+    public void setUserQuery(String query) {
+        this.userQuery = query;
     }
 
-    public void setTable(String table) { this.table = table;}
-
-    // select within a specific date from table
-    public void selectDateRange(String date1, String date2) {
-        // InvoiceDate BETWEEN '2010-01-01' AND '2010-01-31'
-        // create the initial userquery for selecting by date.
-        userQuery = String.format("SELECT * from %s WHERE date BETWEEN '%s' AND '%s'", table, date1, date2);
-
-        // if the user enters a first, or last name, or by check number,
-        // then it will add to the query string and search by that.
-        if(firstName != null) {
-            userQuery += String.format(" AND firstName = '%s'", firstName);
-        }
-
-        if(lastName != null) {
-            userQuery += String.format(" AND lastName = '%s'", lastName);
-        }
-
-        if(checkNumber != null) {
-            userQuery += String.format(" AND checkNumber = '%s'", checkNumber);
-        }
-
-        createDatabaseConnection("Date Range");
+    public String getUserQuery() {
+        return userQuery;
     }
 
-    // select by name
-    public void selectByName() {
-        // name must be wrapped in quotation marks like an actual SQL statement
-        userQuery = String.format("SELECT * FROM %s WHERE ", table);
-
-        // select by only first, last, or both names. If no choice is made then select everything
-        if (firstName != null && lastName != null) {
-            userQuery += String.format(" firstName = '%s' AND lastName = '%s'", firstName, lastName);
-        }
-        else if (firstName != null && lastName == null) {
-            userQuery += String.format("firstName = '%s'", firstName);
-        }
-        else if (firstName == null && lastName != null) {
-            userQuery += String.format("lastName = '%s'", lastName);
-        }
-        else {
-            userQuery = String.format("SELECT * FROM %s;", table);
-        }
-
-        createDatabaseConnection("Name");
-
+    public void setUserInput(ArrayList<String> userInput) {
+        this.userInput = userInput;
     }
 
-    // give the user the option to print out all the names table
-    public void printAllNames() {
-        String fullName = "";
-        String id = "";
+    public ArrayList<String> getUserInput() {
+        return userInput;
+    }
+
+    // get the comparison operator so user can choose how data is selected
+    public void setComparisonOperator(ArrayList<String> comparisonOperator) {
+        this.comparisonOperator = comparisonOperator;
+    }
+
+    public ArrayList<String> getComparisonOperator() {
+        return comparisonOperator;
+    }
+
+    public void setChosenColumns(ArrayList<String> chosenColumns) {
+        this.chosenColumns = chosenColumns;
+    }
+
+    public ArrayList<String> getChosenColumns() {
+        return chosenColumns;
+    }
+
+    // create constructor so user data is added right away.
+    public SelectData(String database, String table, ArrayList<String> userInput, ArrayList<String> comparisonOperator, ArrayList<String> chosenColumns) {
+        setDatabase(database);
+        setTable(table);
+        setUserInput(userInput);
+        setComparisonOperator(comparisonOperator);
+        setChosenColumns(chosenColumns);
+    }
+
+    // get all the data that was queried
+    public void setQueriedData(String data) {
+        this.queriedData = data;
+    }
+
+    public String getQueriedData() {
+        return queriedData;
+    }
+
+    public void createUserQuery() {
+        // create the beginning of query and get size of userInput list
+        String query = String.format("SELECT * FROM %s", getTable());
+        int listLength = getUserInput().size();
+        int dateCount = 0;
+        int addDate = 0;
+
+        for(String i : getChosenColumns()) {
+            if(i.equals("date")) {
+                dateCount++;
+            }
+        }
+
+        // loop through the length of the list
+        if (listLength > 0) {
+            for (int i = 0; i < listLength; i++) {
+
+                // check to see which statement should be added
+                if (i == 0) {
+                    query += " WHERE";
+                }
+                else {
+                    // make sure empty string has not been entered
+                    if(!getUserInput().get(i).equals("")) {
+                        query += " AND";
+                    }
+                    else {
+                        continue;
+                    }
+                }
+
+                // first check if there are 2 date columns in the string
+                // then check the flag to ensure only 2 date statements are entered
+                // then check to make sure the current column is also equal to date
+                if(dateCount == 2 && addDate < 2 && getChosenColumns().get(i).equals("date")) {
+                    // if the flag is still equal to 0 then add BETWEEN to statement otherwise just add the date
+                    if (addDate == 0) {
+                        query += String.format(" %s BETWEEN '%s'", getChosenColumns().get(i), getUserInput().get(i));
+                        addDate++;
+                    }
+                    else {
+                        query += String.format(" '%s'", getUserInput().get(i));
+                        addDate++;
+                    }
+                }
+                else {
+                    // once date has been added to the string or is never entered, then create statement as normal
+                    query += String.format(" %s %s '%s'", getChosenColumns().get(i), getComparisonOperator().get(i), getUserInput().get(i));
+                }
+            }
+            query += ";";
+            //System.out.println(query);
+        }
+
+        setUserQuery(query);
+    }
+    public void executeSelectQuery() {
+        // start creating the query to the database
+        String createSentence = "";
+        int listLength = GrabTableData.grabTableData().get(getTable()).size();
+        createUserQuery();
 
         try {
-            // create connection to the database and then get user query
-            Connection conn = DriverManager.getConnection(databaseName);
+            // create the connection and sql statement, then execute the query
+            Connection conn = DriverManager.getConnection("jdbc:sqlite:.\\" + getDatabase());
             Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery(String.format("SELECT id, firstName, lastName FROM %s", table));
-            // print out a header so values can be lined up properly
-            System.out.println("---------------------------------");
-            System.out.printf("%-10s%s","ID", "Name\n");
-            System.out.println("---------------------------------");
-            while (rs.next()) {
-                // create variables to hold data so it's easier to format in print statement
-                fullName = rs.getString("firstName") + " " + rs.getString("lastName");
-                id = rs.getString("id");
 
-                // print the formatted data
-                System.out.printf("%-10s%s\n", id, fullName);
-                System.out.println("---------------------------------");
+            // create result set
+            ResultSet insertResults = statement.executeQuery(getUserQuery());
+
+            // execute select query to show user the result of statement
+            // after getting result set, loop through data using known columns retrieved from linked hash map
+            while(insertResults.next()) {
+                for(int i = 0; i < listLength; i++) {
+                    if ((i+1) != listLength) {
+                        createSentence += insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + "|";
+                    }
+                    else {
+                        createSentence += insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i));
+                    }
+                }
+                createSentence += "\n";
             }
 
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
+            // set the selected data
+            setQueriedData(createSentence);
 
-    // select by check number
-    public void selectByCheckNumber() {
-        userQuery = String.format("SELECT * FROM %s WHERE checkNumber = \"%s\"", table, checkNumber);
-
-        createDatabaseConnection("Check #");
-    }
-
-    // select donation amount if it's equal to, less than, or greater than amount given
-    public void selectDonationAmount(int greaterLessEqual) {
-        //userQuery = String.format("SELECT * FROM %s WHERE donationAmount ", table);
-
-        // check if how the user wants to compare amounts and then select by that value
-        if(greaterLessEqual == 0) {
-            userQuery = String.format("SELECT * FROM %s WHERE donationAmount < '%s'", table, donationAmount);
-        }
-        else if (greaterLessEqual == 1) {
-            userQuery = String.format("SELECT * FROM %s WHERE donationAmount = '%s'", table, donationAmount);
-        }
-        else if(greaterLessEqual == 2) {
-            userQuery = String.format("SELECT * FROM %s WHERE donationAmount > '%s'", table, donationAmount);
-        }
-        else {
-            userQuery = String.format("SELECT * FROM %s", table);
-        }
-
-        createDatabaseConnection("Donation Amount");
-    }
-
-    public void createDatabaseConnection(String message) {
-        // get the query results and pass it into printResults
-        try {
-            // create connection to the database and then get user query
-            Connection conn = DriverManager.getConnection(databaseName);
-            Statement statement = conn.createStatement();
-            ResultSet queryResults = statement.executeQuery(userQuery);
-
-            // pass results from user query to print function then close connection
-            System.out.printf("%s\n", "Retrieving by " + message);
-            if(table.equals("checkDonations")){
-                PrintData.printCheckResults(queryResults);
-            }
-            else if(table.equals("cashDonations")){
-                PrintData.printCashResults(queryResults);
-            }
-            else if(table.equals("flightInfo")) {
-
-            }
-            else if(table.equals("rentedBuilding")) {
-
-            }
-            else {
-                System.out.println("No table was selected");
-            }
-
-
+            // close the statement and connection
+            statement.close();
             conn.close();
-        } catch (SQLException e){
-            System.out.println(e.getMessage());
+        }
+        catch (SQLException sqlException) {
+            System.out.println(sqlException.getMessage());
         }
     }
+
+    @Override
+    public String toString() {
+        return "Selected Data: \n" + getQueriedData();
+    }
+
 
 }

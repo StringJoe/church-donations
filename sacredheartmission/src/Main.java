@@ -1,26 +1,47 @@
 import java.util.ArrayList;
-import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
         ArrayList<String> test = new ArrayList<String>();
+        ArrayList<String> testComp = new ArrayList<String>();
+        ArrayList<String> testCol = new ArrayList<String>();
 
-        test.add("Joe");
-        test.add("Santay");
-        test.add("2022-11-07");
-        test.add("7183");
-        test.add("200");
-
+        // check to make sure file exists
         checkFileExistence.checkForFile();
+
+        //test.add("Samy");
+        test.add("2022-09-01");
+        test.add("2022-11-07");
+        //test.add("Kamkar");
+        //test.add("");
+
+        //testCol.add(GrabTableData.grabTableData().get("checkDonations").get(1));
+        testCol.add(GrabTableData.grabTableData().get("checkDonations").get(3));
+        testCol.add(GrabTableData.grabTableData().get("checkDonations").get(3));
+        //testCol.add(GrabTableData.grabTableData().get("checkDonations").get(2));
+
+        //testComp.add("=");
+        testComp.add("");
+        testComp.add("");
+        //testComp.add("=");
+        //testComp.add(">");
+
+        MenuPage menuPage = new MenuPage();
+
         //GrabTableData.grabTableData();
         DeleteData deleteData;
         InsertData insertData;
+        SelectData selectData;
 
-        insertData = new InsertData("checkDonations", test);
-        insertData.executeQuery();
-        System.out.println(insertData);
+        selectData = new SelectData("donations.db", "checkDonations", test, testComp, testCol);
+        selectData.executeSelectQuery();
+        //System.out.println(selectData);
 
-        //deleteData = new DeleteData(4, "checkDonations");
+        //insertData = new InsertData("checkDonations", test, "donations.db");
+        //insertData.executeQuery();
+        //System.out.println(insertData);
+
+        //deleteData = new DeleteData(3, "checkDonations", "donations.db");
         //deleteData.deleteData();
         //System.out.println(deleteData);
 

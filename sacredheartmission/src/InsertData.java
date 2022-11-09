@@ -2,8 +2,17 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class InsertData {
-    private String table, selectData, selectQuery;
+    private String table, selectData, selectQuery, database;
     private ArrayList<String> dataToInsert = new ArrayList<String>();
+
+    // get the database from the user
+    public void setDatabase(String database) {
+        this.database = database;
+    }
+
+    public String getDatabase() {
+        return database;
+    }
 
     // get the name of the table
     public void setTable(String table) {
@@ -23,10 +32,11 @@ public class InsertData {
         return dataToInsert;
     }
 
-    public InsertData(String table, ArrayList<String> data) {
+    public InsertData(String table, ArrayList<String> data, String database) {
         setTable(table);
         setDataToInsert(data);
         setSelectQuery(table);
+        setDatabase(database);
     }
 
     // set the query for user
@@ -93,7 +103,7 @@ public class InsertData {
 
         try {
             // create the connection and sql statement, then execute the query
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:.\\donations.db");
+            Connection conn = DriverManager.getConnection("jdbc:sqlite:.\\" + getDatabase());
             Statement statement = conn.createStatement();
 
             // insert the data into the database
