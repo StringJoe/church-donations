@@ -2,6 +2,8 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class SelectData {
+    // hold array to hold queried data
+    private ArrayList<String> listOfData = new ArrayList<String>();
     private String database, userQuery, table, queriedData;
     private ArrayList<String> userInput = new ArrayList<String>();
     private ArrayList<String> comparisonOperator = new ArrayList<String>();
@@ -73,8 +75,8 @@ public class SelectData {
         this.queriedData = data;
     }
 
-    public String getQueriedData() {
-        return queriedData;
+    public String getData() {
+        return this.queriedData;
     }
 
     public void createUserQuery() {
@@ -133,7 +135,7 @@ public class SelectData {
 
         setUserQuery(query);
     }
-    public void executeSelectQuery() {
+    public String executeSelectQuery() {
         // start creating the query to the database
         String createSentence = "";
         int listLength = GrabTableData.grabTableData().get(getTable()).size();
@@ -149,17 +151,33 @@ public class SelectData {
 
             // execute select query to show user the result of statement
             // after getting result set, loop through data using known columns retrieved from linked hash map
+            String temp = "";
+
             while(insertResults.next()) {
                 for(int i = 0; i < listLength; i++) {
                     if ((i+1) != listLength) {
-                        createSentence += insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + "|";
+                        if (GrabTableData.grabTableData().get(getTable()).get(i).equals("checkNumber")) {
+                            createSentence += GrabTableData.grabTableData().get(getTable()).get(i).toUpperCase() + ": #" + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + " | ";
+                        }
+                        else {
+                            createSentence += GrabTableData.grabTableData().get(getTable()).get(i).toUpperCase() + ": " + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + " | ";
+                        }
+
+                        //temp += insertResults.getString(String.format("%s", GrabTableData.grabTableData().get(getTable()).get(i))) + "\t\t";
+                        temp += insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + "\t";
                     }
                     else {
-                        createSentence += insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i));
+                        createSentence += GrabTableData.grabTableData().get(getTable()).get(i).toUpperCase() + ": " + "$" + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i));
+                        //temp += insertResults.getString(String.format("%s", GrabTableData.grabTableData().get(getTable()).get(i))) + "\t\t";
+                        temp  += insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i));
                     }
                 }
-                createSentence += "\n";
+                listOfData.add(temp);
+                temp = "";
+                createSentence += "\n\n";
             }
+
+            //System.out.println(createSentence);
 
             // set the selected data
             setQueriedData(createSentence);
@@ -171,11 +189,13 @@ public class SelectData {
         catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+
+        return createSentence;
     }
 
     @Override
     public String toString() {
-        return "Selected Data: \n" + getQueriedData();
+        return "Selected Data: \n" + getData();
     }
 
 

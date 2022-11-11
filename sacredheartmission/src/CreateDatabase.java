@@ -84,14 +84,14 @@ public class CreateDatabase {
                     "date TEXT, rentalCost INTEGER)");
 
             /* test values */
-            statement.execute("INSERT INTO rentedBuilding (location, date, rentalCost) " +
-                    "VALUES('CIA', '2022-09-28', 100000)");
+            statement.execute("INSERT INTO rentedBuilding (id, location, date, rentalCost) " +
+                    "VALUES(NULL, 'CIA', '2022-09-28', 100000)");
 
-            statement.execute("INSERT INTO rentedBuilding (location, date, rentalCost) " +
-                    "VALUES('FBI', '2022-10-05', 75000)");
+            statement.execute("INSERT INTO rentedBuilding (id, location, date, rentalCost) " +
+                    "VALUES(NULL, 'FBI', '2022-10-05', 75000)");
 
-            statement.execute("INSERT INTO rentedBuilding (location, date, rentalCost) " +
-                    "VALUES('NSA', '2022-10-12', 50000)");
+            statement.execute("INSERT INTO rentedBuilding (id, location, date, rentalCost) " +
+                    "VALUES(NULL, 'NSA', '2022-10-12', 50000)");
 
             // close the statement and connection
             statement.close();

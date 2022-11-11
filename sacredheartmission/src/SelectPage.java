@@ -3,12 +3,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Map;
 
 public class SelectPage extends JFrame implements ActionListener {
-    int a = 0;
-    SelectData selectData;
+    // declare selectData object for connecting to the database
+    private SelectData selectData;
+    // create label to present sql results and create table model
+    JLabel presentData = new JLabel();
     private ArrayList<String> sqlStatements = new ArrayList<String>();
     private ArrayList<String> columnsNeeded = new ArrayList<String>();
     private ArrayList<String> comparisonOperators = new ArrayList<String>();
@@ -16,10 +17,19 @@ public class SelectPage extends JFrame implements ActionListener {
     // create a search button for when user wants to get results
     JButton searchButton = new JButton();
 
-    // create variables to select names and store them
+    // create variables for database values and store them
+    private String id, date1, date2, money;
     private String firstName, lastName;
+
+    private String checkNumber;
+    private String location;
+
+    // create text fields for each value
     private TextField firstNameText = new TextField();
     private TextField lastNameText = new TextField();
+
+    private TextField checkNumberText = new TextField();
+    private TextField locationText = new TextField();
 
     // variables to set the max height and width of window upon opening
     private static final int PREF_W = 750;
@@ -28,8 +38,8 @@ public class SelectPage extends JFrame implements ActionListener {
     // variable to hold list of tables in database
     private JComboBox tableBox;
 
-    // create jpanel for options in top of window
     private JPanel optionBar  = new JPanel();
+    private JPanel showResults = new JPanel();
 
     // create array list to hold tables in database
     private ArrayList<String> tables = new ArrayList<String>();
@@ -50,6 +60,14 @@ public class SelectPage extends JFrame implements ActionListener {
 
     public String getLastName() {
         return lastName;
+    }
+
+    public void setCheckNumber(String check) {
+        this.checkNumber = check;
+    }
+
+    public String getCheckNumber() {
+        return checkNumber;
     }
 
     public ArrayList<String> getTables() {
@@ -76,11 +94,15 @@ public class SelectPage extends JFrame implements ActionListener {
         // set main options for the program: title, exit button, and layout to grid layout
         this.setTitle("Sacred Heart Mission Financial Information: Selecting Data"); // sets title of the this
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // exit out of application when X is clicked
-        this.setLayout(new GridLayout(6,1));
+        this.setLayout(new GridLayout(3,1));
 
         // create the option bar so user can create select query
         optionBar.setBackground(new Color(158, 6, 24));
         optionBar.setLayout(new FlowLayout(FlowLayout.LEFT, 25, 10));
+
+        // create the option bar so user can create select query
+        showResults.setBackground(Color.WHITE);
+        showResults.setLayout(new FlowLayout(FlowLayout.LEFT, 25, 10));
 
 
         // create a dropdown menu of all available tables in database
@@ -91,6 +113,7 @@ public class SelectPage extends JFrame implements ActionListener {
 
         // add list of query options to top of window
         this.add(optionBar);
+        this.add(new JScrollPane(showResults));
         this.pack();
         this.setVisible(true); // makes this visible
         // set image of application to Sacred Heart
@@ -120,6 +143,15 @@ public class SelectPage extends JFrame implements ActionListener {
         }
     }
 
+    private void addCheckStatement() {
+        setCheckNumber(checkNumberText.getText());
+        if(!getCheckNumber().equals("")) {
+            sqlStatements.add(getCheckNumber());
+            columnsNeeded.add("checkNumber");
+            comparisonOperators.add("=");
+        }
+    }
+
     // create the search button
     private void createSearchButton() {
         searchButton.setText("Search Database");
@@ -128,20 +160,28 @@ public class SelectPage extends JFrame implements ActionListener {
     }
 
     private void queryDatabase(String table) {
-        a++;
+
         sqlStatements.removeAll(sqlStatements);
         comparisonOperators.removeAll(comparisonOperators);
         columnsNeeded.removeAll(columnsNeeded);
         addNameStatements();
+        addCheckStatement();
+
+        // getQueriedData method stopped working suddenly...
         selectData = new SelectData("donations.db", table, sqlStatements, comparisonOperators, columnsNeeded);
-        selectData.executeSelectQuery();
-        System.out.println(selectData);
-        //System.out.println(a);
+
+        presentData.setFont(new Font("Times New Roman", Font.PLAIN, 16));
+        presentData.setText("<html>" + String.valueOf(selectData.executeSelectQuery()).replaceAll("<","&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br/>") + "</html>");
+
+        showResults.add(presentData);
+        this.revalidate();
+        this.repaint();
+        System.out.println("my data "  + selectData);
     }
     private void createNameFields() {
-        firstNameText.setPreferredSize(new Dimension(125,30));
+        firstNameText.setPreferredSize(new Dimension(125,20));
         firstNameText.setFont(new Font("Times New Roman", Font.PLAIN, 12));
-        lastNameText.setPreferredSize(new Dimension(125,30));
+        lastNameText.setPreferredSize(new Dimension(125,20));
         lastNameText.setFont(new Font("Times New Roman", Font.PLAIN, 12));
         optionBar.add(firstNameText);
         optionBar.add(lastNameText);
@@ -153,19 +193,38 @@ public class SelectPage extends JFrame implements ActionListener {
         optionBar.remove(lastNameText);
     }
 
+    private void createCheckField() {
+        checkNumberText.setPreferredSize(new Dimension(100, 20));
+        checkNumberText.setFont(new Font("Times New Roman", Font.PLAIN, 12));
+        optionBar.add(checkNumberText);
+    }
+    private void removeCheckField() {
+        checkNumberText.setText("");
+        optionBar.remove(checkNumberText);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==tableBox) {
-            if(tableBox.getSelectedItem().equals("checkDonations") || tableBox.getSelectedItem().equals("flightInfo")) {
+            if(tableBox.getSelectedItem().equals("checkDonations")) {
                 removeNameFields();
+                removeCheckField();
+                createNameFields();
+                createCheckField();
+            }
+            else if(tableBox.getSelectedItem().equals("flightInfo")){
+                removeNameFields();
+                removeCheckField();
                 createNameFields();
             }
             else if (tableBox.getSelectedItem().equals("cashDonations")) {
                 removeNameFields();
+                removeCheckField();
 
             }
             else if (tableBox.getSelectedItem().equals("rentedBuilding")){
                 removeNameFields();
+                removeCheckField();
 
             }
 
