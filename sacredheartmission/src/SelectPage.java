@@ -10,6 +10,7 @@ public class SelectPage extends JFrame implements ActionListener {
     private SelectData selectData;
     // create label to present sql results and create table model
     JLabel presentData = new JLabel();
+    JButton backToMenu = new JButton();
     private ArrayList<String> sqlStatements = new ArrayList<String>();
     private ArrayList<String> columnsNeeded = new ArrayList<String>();
     private ArrayList<String> comparisonOperators = new ArrayList<String>();
@@ -20,6 +21,16 @@ public class SelectPage extends JFrame implements ActionListener {
     // create variables for database values and store them
     private String id, date1, date2, money;
     private String firstName, lastName;
+
+    JLabel idLabel = new JLabel();
+    JLabel date1Label = new JLabel();
+    JLabel date2Label = new JLabel();
+    JLabel moneyLabel = new JLabel();
+    JLabel first = new JLabel();
+    JLabel second = new JLabel();
+    JLabel check = new JLabel();
+
+    JLabel building = new JLabel();
 
     private String checkNumber;
     private String location;
@@ -44,6 +55,8 @@ public class SelectPage extends JFrame implements ActionListener {
     private JComboBox tableBox;
 
     private JPanel optionBar  = new JPanel();
+    private JPanel optionBarMid  = new JPanel();
+    private JPanel optionBarBot  = new JPanel();
     private JPanel showResults = new JPanel();
 
     // create array list to hold tables in database
@@ -105,16 +118,21 @@ public class SelectPage extends JFrame implements ActionListener {
     }
 
     SelectPage() {
+
+        backToMenu.setText("Return to Main Menu");
+        backToMenu.setSize(50,50);
+        backToMenu.addActionListener(this);
+        optionBar.add(backToMenu);
         // set the tables in database for later use
         setTables();
         // set main options for the program: title, exit button, and layout to grid layout
         this.setTitle("Sacred Heart Mission Financial Information: Selecting Data"); // sets title of the this
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // exit out of application when X is clicked
-        this.setLayout(new GridLayout(3,1));
+        this.setLayout(new GridLayout(2,1));
 
         // create the option bar so user can create select query
         optionBar.setBackground(new Color(158, 6, 24));
-        optionBar.setLayout(new FlowLayout(FlowLayout.LEFT, 25, 10));
+        optionBar.setLayout(new FlowLayout(FlowLayout.CENTER, 25, 75));
 
         // create the option bar so user can create select query
         showResults.setBackground(Color.WHITE);
@@ -125,12 +143,15 @@ public class SelectPage extends JFrame implements ActionListener {
         tableBox = new JComboBox(getTables().toArray());
         tableBox.addActionListener(this);
         optionBar.add(tableBox);
-
+        createSearchButton();
+        addCommonLabels();
         createCommonTextFields();
+
         searchButton.addActionListener(this);
 
         // add list of query options to top of window
         this.add(optionBar);
+
         this.add(new JScrollPane(showResults));
         this.pack();
         this.setVisible(true); // makes this visible
@@ -139,6 +160,7 @@ public class SelectPage extends JFrame implements ActionListener {
         this.setIconImage(image.getImage()); // sets the image icon of the this to our new image
 
     }
+
 
     // add names to sql query if check or flight table selected
     private void addNameStatements(){
@@ -266,6 +288,15 @@ public class SelectPage extends JFrame implements ActionListener {
         //System.out.println("my data "  + selectData);
     }
     private void createNameFields() {
+
+        first.setText("Enter First Name:");
+        first.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+        first.setForeground(Color.WHITE);
+
+
+        second.setText("Enter Last Name:");
+        second.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+        second.setForeground(Color.WHITE);
         // adjust text field for first name
         firstNameText.setPreferredSize(new Dimension(125,20));
         firstNameText.setFont(new Font("Times New Roman", Font.PLAIN, 12));
@@ -275,53 +306,88 @@ public class SelectPage extends JFrame implements ActionListener {
         lastNameText.setFont(new Font("Times New Roman", Font.PLAIN, 12));
 
         // add both to the option bar at top of application
+        optionBar.add(first);
         optionBar.add(firstNameText);
+        optionBar.add(second);
         optionBar.add(lastNameText);
     }
     private void removeNameFields() {
         // reset text for names and remove from option bar so user cannot use them by accident
         firstNameText.setText("");
         lastNameText.setText("");
+        optionBar.remove(first);
+        optionBar.remove(second);
         optionBar.remove(firstNameText);
         optionBar.remove(lastNameText);
     }
 
     private void createCheckField() {
+        check.setText("Enter Check #:");
+        check.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+        check.setForeground(Color.WHITE);
         // adjust text field for check and add to option bar
         checkNumberText.setPreferredSize(new Dimension(100, 20));
         checkNumberText.setFont(new Font("Times New Roman", Font.PLAIN, 12));
+        optionBar.add(check);
         optionBar.add(checkNumberText);
     }
     private void removeCheckField() {
         // reset the text for the check text field and remove from option panel
+        optionBar.remove(check);
         checkNumberText.setText("");
         optionBar.remove(checkNumberText);
     }
 
     private void createLocField() {
+        building.setText("Enter Building Address:");
+        building.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+        building.setForeground(Color.WHITE);
         locationText.setPreferredSize(new Dimension(150, 20));
         locationText.setFont(new Font("Times New Roman", Font.PLAIN, 12));
+        optionBar.add(building);
         optionBar.add(locationText);
     }
 
     private void removeLocField() {
+        optionBar.remove(building);
         locationText.setText("");
         optionBar.remove(locationText);
     }
+    private void addCommonLabels() {
+        idLabel.setText("Enter ID: ");
+        idLabel.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+        idLabel.setForeground(Color.WHITE);
 
+        date1Label.setText("Enter Year-Month-Date: ");
+        date1Label.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+        date1Label.setForeground(Color.WHITE);
+
+        date2Label.setText("Enter Year-Month-Date: ");
+        date2Label.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+        date2Label.setForeground(Color.WHITE);
+
+        moneyLabel.setText("Dollar Amount: ");
+        moneyLabel.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+        moneyLabel.setForeground(Color.WHITE);
+    }
     private void createCommonTextFields(){
+        optionBar.add(idLabel);
+
         idText.setPreferredSize(new Dimension(50, 20));
         idText.setFont(new Font("Times New Roman", Font.PLAIN, 12));
         optionBar.add(idText);
 
+        optionBar.add(date1Label);
         date1Text.setPreferredSize(new Dimension(100, 20));
         date1Text.setFont(new Font("Times New Roman", Font.PLAIN, 12));
         optionBar.add(date1Text);
 
+        optionBar.add(date2Label);
         date2Text.setPreferredSize(new Dimension(100, 20));
         date2Text.setFont(new Font("Times New Roman", Font.PLAIN, 12));
         optionBar.add(date2Text);
 
+        optionBar.add(moneyLabel);
         moneyText.setPreferredSize(new Dimension(50, 20));
         moneyText.setFont(new Font("Times New Roman", Font.PLAIN, 12));
         optionBar.add(moneyText);
@@ -368,14 +434,16 @@ public class SelectPage extends JFrame implements ActionListener {
                 createLocField();
             }
 
-            optionBar.remove(searchButton);
-            createSearchButton();
             optionBar.revalidate();
             optionBar.repaint();
 
         }
         if(e.getSource()==searchButton) {
             queryDatabase(tableBox.getSelectedItem().toString());
+        }
+        if(e.getSource()==backToMenu) {
+            this.dispose();
+            new MenuPage();
         }
     }
 
