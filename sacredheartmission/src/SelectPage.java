@@ -31,6 +31,11 @@ public class SelectPage extends JFrame implements ActionListener {
     private TextField checkNumberText = new TextField();
     private TextField locationText = new TextField();
 
+    private TextField idText = new TextField();
+    private TextField date1Text = new TextField();
+    private TextField date2Text = new TextField();
+    private TextField moneyText = new TextField();
+
     // variables to set the max height and width of window upon opening
     private static final int PREF_W = 750;
     private static final int PREF_H = 750;
@@ -73,6 +78,14 @@ public class SelectPage extends JFrame implements ActionListener {
     public void setLoc(String loc) {this.location = loc;}
     public String getLoc() {return location;}
 
+    public void setId(String id) {this.id = id;}
+    public String getId() {return id;}
+    public void setDate1(String date1) {this.date1 = date1;}
+    public String getDate1() {return date1;}
+    public void setDate2(String date2) {this.date2 = date2;}
+    public String getDate2() {return date2;}
+    public void setMoney(String money) {this.money = money;}
+    public String getMoney() {return money;}
     public ArrayList<String> getTables() {
         return tables;
     }
@@ -112,6 +125,8 @@ public class SelectPage extends JFrame implements ActionListener {
         tableBox = new JComboBox(getTables().toArray());
         tableBox.addActionListener(this);
         optionBar.add(tableBox);
+
+        createCommonTextFields();
         searchButton.addActionListener(this);
 
         // add list of query options to top of window
@@ -164,6 +179,60 @@ public class SelectPage extends JFrame implements ActionListener {
         }
     }
 
+    public void addCommonStatements(String table) {
+        String col = "";
+
+        if(table.equals("cashDonations") || table.equals("checkDonations")){
+            col = "donationAmount";
+        }
+        else if(table.equals("flightInfo")) {
+            col = "flightCost";
+        }
+        else if (table.equals("rentedBuilding")) {
+            col = "rentalCost";
+        }
+
+        setId(idText.getText());
+        setDate1(date1Text.getText());
+        setDate2(date2Text.getText());
+        setMoney(moneyText.getText());
+
+        // get the id if not empty
+        if(!getId().equals("")) {
+            sqlStatements.add(getId());
+            columnsNeeded.add("id");
+            comparisonOperators.add("=");
+        }
+
+        // check if both dates are empty or full
+        if(!getDate1().equals("") && !getDate2().equals("")) {
+            sqlStatements.add(getDate1());
+            columnsNeeded.add("date");
+            comparisonOperators.add("");
+
+            sqlStatements.add(getDate2());
+            columnsNeeded.add("date");
+            comparisonOperators.add("");
+        }
+        else if(!getDate1().equals("")) {
+            sqlStatements.add(getDate1());
+            columnsNeeded.add("date");
+            comparisonOperators.add("=");
+        }
+        else if(!getDate2().equals("")) {
+            sqlStatements.add(getDate2());
+            columnsNeeded.add("date");
+            comparisonOperators.add("=");
+        }
+
+        // get money if not empty
+        if(!getMoney().equals("")) {
+            sqlStatements.add(getMoney());
+            columnsNeeded.add(col);
+            comparisonOperators.add("=");
+        }
+    }
+
     // create the search button
     private void createSearchButton() {
         searchButton.setText("Search Database");
@@ -172,34 +241,45 @@ public class SelectPage extends JFrame implements ActionListener {
     }
 
     private void queryDatabase(String table) {
-
+        // remove all the statements previously added to the lists
         sqlStatements.removeAll(sqlStatements);
         comparisonOperators.removeAll(comparisonOperators);
         columnsNeeded.removeAll(columnsNeeded);
+
+        // add the statements back in so query can be executed
         addNameStatements();
         addCheckStatement();
         addLocationStatement();
+        addCommonStatements(table);
 
         // getQueriedData method stopped working suddenly...
         selectData = new SelectData("donations.db", table, sqlStatements, comparisonOperators, columnsNeeded);
 
+        // add the data to a new layout, so it can be presented nicely to the user
         presentData.setFont(new Font("Times New Roman", Font.PLAIN, 16));
         presentData.setText("<html>" + String.valueOf(selectData.executeSelectQuery()).replaceAll("<","&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br/>") + "</html>");
 
+        // add the sql results to the results panel and then revalidate and repaint the page
         showResults.add(presentData);
         this.revalidate();
         this.repaint();
         //System.out.println("my data "  + selectData);
     }
     private void createNameFields() {
+        // adjust text field for first name
         firstNameText.setPreferredSize(new Dimension(125,20));
         firstNameText.setFont(new Font("Times New Roman", Font.PLAIN, 12));
+
+        // adjust text field of last name
         lastNameText.setPreferredSize(new Dimension(125,20));
         lastNameText.setFont(new Font("Times New Roman", Font.PLAIN, 12));
+
+        // add both to the option bar at top of application
         optionBar.add(firstNameText);
         optionBar.add(lastNameText);
     }
     private void removeNameFields() {
+        // reset text for names and remove from option bar so user cannot use them by accident
         firstNameText.setText("");
         lastNameText.setText("");
         optionBar.remove(firstNameText);
@@ -207,11 +287,13 @@ public class SelectPage extends JFrame implements ActionListener {
     }
 
     private void createCheckField() {
+        // adjust text field for check and add to option bar
         checkNumberText.setPreferredSize(new Dimension(100, 20));
         checkNumberText.setFont(new Font("Times New Roman", Font.PLAIN, 12));
         optionBar.add(checkNumberText);
     }
     private void removeCheckField() {
+        // reset the text for the check text field and remove from option panel
         checkNumberText.setText("");
         optionBar.remove(checkNumberText);
     }
@@ -225,6 +307,24 @@ public class SelectPage extends JFrame implements ActionListener {
     private void removeLocField() {
         locationText.setText("");
         optionBar.remove(locationText);
+    }
+
+    private void createCommonTextFields(){
+        idText.setPreferredSize(new Dimension(50, 20));
+        idText.setFont(new Font("Times New Roman", Font.PLAIN, 12));
+        optionBar.add(idText);
+
+        date1Text.setPreferredSize(new Dimension(100, 20));
+        date1Text.setFont(new Font("Times New Roman", Font.PLAIN, 12));
+        optionBar.add(date1Text);
+
+        date2Text.setPreferredSize(new Dimension(100, 20));
+        date2Text.setFont(new Font("Times New Roman", Font.PLAIN, 12));
+        optionBar.add(date2Text);
+
+        moneyText.setPreferredSize(new Dimension(50, 20));
+        moneyText.setFont(new Font("Times New Roman", Font.PLAIN, 12));
+        optionBar.add(moneyText);
     }
 
     @Override
