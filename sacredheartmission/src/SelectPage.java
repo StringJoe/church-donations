@@ -70,6 +70,9 @@ public class SelectPage extends JFrame implements ActionListener {
         return checkNumber;
     }
 
+    public void setLoc(String loc) {this.location = loc;}
+    public String getLoc() {return location;}
+
     public ArrayList<String> getTables() {
         return tables;
     }
@@ -152,6 +155,15 @@ public class SelectPage extends JFrame implements ActionListener {
         }
     }
 
+    private void addLocationStatement() {
+        setLoc(locationText.getText());
+        if(!getLoc().equals("")) {
+            sqlStatements.add(getLoc());
+            columnsNeeded.add("location");
+            comparisonOperators.add("=");
+        }
+    }
+
     // create the search button
     private void createSearchButton() {
         searchButton.setText("Search Database");
@@ -166,6 +178,7 @@ public class SelectPage extends JFrame implements ActionListener {
         columnsNeeded.removeAll(columnsNeeded);
         addNameStatements();
         addCheckStatement();
+        addLocationStatement();
 
         // getQueriedData method stopped working suddenly...
         selectData = new SelectData("donations.db", table, sqlStatements, comparisonOperators, columnsNeeded);
@@ -176,7 +189,7 @@ public class SelectPage extends JFrame implements ActionListener {
         showResults.add(presentData);
         this.revalidate();
         this.repaint();
-        System.out.println("my data "  + selectData);
+        //System.out.println("my data "  + selectData);
     }
     private void createNameFields() {
         firstNameText.setPreferredSize(new Dimension(125,20));
@@ -203,29 +216,56 @@ public class SelectPage extends JFrame implements ActionListener {
         optionBar.remove(checkNumberText);
     }
 
+    private void createLocField() {
+        locationText.setPreferredSize(new Dimension(150, 20));
+        locationText.setFont(new Font("Times New Roman", Font.PLAIN, 12));
+        optionBar.add(locationText);
+    }
+
+    private void removeLocField() {
+        locationText.setText("");
+        optionBar.remove(locationText);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==tableBox) {
             if(tableBox.getSelectedItem().equals("checkDonations")) {
+                // remove fields before repainting
                 removeNameFields();
                 removeCheckField();
+                removeLocField();
+
+                // add fields for table
                 createNameFields();
                 createCheckField();
             }
             else if(tableBox.getSelectedItem().equals("flightInfo")){
+                // remove fields before repainting
                 removeNameFields();
                 removeCheckField();
+                removeLocField();
+
+                // add fields for table
                 createNameFields();
             }
             else if (tableBox.getSelectedItem().equals("cashDonations")) {
+                // remove fields before repainting
                 removeNameFields();
                 removeCheckField();
+                removeLocField();
+
+                // add fields for table
 
             }
             else if (tableBox.getSelectedItem().equals("rentedBuilding")){
+                // remove fields before repainting
                 removeNameFields();
                 removeCheckField();
+                removeLocField();
 
+                // add fields for table
+                createLocField();
             }
 
             optionBar.remove(searchButton);
