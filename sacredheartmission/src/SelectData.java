@@ -157,17 +157,23 @@ public class SelectData {
                 for(int i = 0; i < listLength; i++) {
                     if ((i+1) != listLength) {
                         if (GrabTableData.grabTableData().get(getTable()).get(i).equals("checkNumber")) {
-                            createSentence += GrabTableData.grabTableData().get(getTable()).get(i).toUpperCase() + ": #" + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + " | ";
+                            createSentence += "#" + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + "|";
+                            temp += "#" + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + " ";
+                           // createSentence += GrabTableData.grabTableData().get(getTable()).get(i).toUpperCase() + ": #" + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + " | ";
                         }
                         else {
-                            createSentence += GrabTableData.grabTableData().get(getTable()).get(i).toUpperCase() + ": " + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + " | ";
+                            createSentence += insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + "|";
+                            temp += insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + " ";
+                            //createSentence += GrabTableData.grabTableData().get(getTable()).get(i).toUpperCase() + ": " + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + " | ";
                         }
 
                         //temp += insertResults.getString(String.format("%s", GrabTableData.grabTableData().get(getTable()).get(i))) + "\t\t";
-                        temp += insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + "\t";
+
                     }
                     else {
-                        createSentence += GrabTableData.grabTableData().get(getTable()).get(i).toUpperCase() + ": " + "$" + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i));
+                        createSentence += "$" + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + "|";
+                        temp += "$" + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + " ";
+                        //createSentence += GrabTableData.grabTableData().get(getTable()).get(i).toUpperCase() + ": " + "$" + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i));
                         //temp += insertResults.getString(String.format("%s", GrabTableData.grabTableData().get(getTable()).get(i))) + "\t\t";
                         temp  += insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i));
                     }
@@ -191,6 +197,15 @@ public class SelectData {
         }
 
         return createSentence;
+    }
+
+    public String[] returnQuery() {
+        String[] data = new String[listOfData.size()];
+        for (int i = 0; i < listOfData.size(); i++) {
+            data[i] = listOfData.get(i);
+        }
+
+        return data;
     }
 
     @Override

@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +12,8 @@ public class SelectPage extends JFrame implements ActionListener {
     // create label to present sql results and create table model
     JLabel presentData = new JLabel();
     JButton backToMenu = new JButton();
+
+    JButton clearAllText = new JButton();
     private ArrayList<String> sqlStatements = new ArrayList<String>();
     private ArrayList<String> columnsNeeded = new ArrayList<String>();
     private ArrayList<String> comparisonOperators = new ArrayList<String>();
@@ -55,8 +58,6 @@ public class SelectPage extends JFrame implements ActionListener {
     private JComboBox tableBox;
 
     private JPanel optionBar  = new JPanel();
-    private JPanel optionBarMid  = new JPanel();
-    private JPanel optionBarBot  = new JPanel();
     private JPanel showResults = new JPanel();
 
     // create array list to hold tables in database
@@ -117,6 +118,16 @@ public class SelectPage extends JFrame implements ActionListener {
         //this.tables = tables;
     }
 
+    public String[] getAllCols(String table) {
+        String [] cols = new String[GrabTableData.grabTableData().get(table).size()];
+
+        for(int i = 0; i < cols.length; i++) {
+            cols[i] = GrabTableData.grabTableData().get(table).get(i);
+            //System.out.println("KEY: " + i.getKey() + " VALUE " + i.getValue()+", ");
+        }
+        return cols;
+    }
+
     SelectPage() {
 
         backToMenu.setText("Return to Main Menu");
@@ -132,7 +143,7 @@ public class SelectPage extends JFrame implements ActionListener {
 
         // create the option bar so user can create select query
         optionBar.setBackground(new Color(158, 6, 24));
-        optionBar.setLayout(new FlowLayout(FlowLayout.CENTER, 25, 75));
+        optionBar.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 100));
 
         // create the option bar so user can create select query
         showResults.setBackground(Color.WHITE);
@@ -144,10 +155,12 @@ public class SelectPage extends JFrame implements ActionListener {
         tableBox.addActionListener(this);
         optionBar.add(tableBox);
         createSearchButton();
+        createClearFieldsButton();
         addCommonLabels();
         createCommonTextFields();
 
         searchButton.addActionListener(this);
+        clearAllText.addActionListener(this);
 
         // add list of query options to top of window
         this.add(optionBar);
@@ -262,7 +275,29 @@ public class SelectPage extends JFrame implements ActionListener {
         optionBar.add(searchButton);
     }
 
+    private void createClearFieldsButton() {
+        clearAllText.setText("Clear Text");
+        clearAllText.setSize(50, 50);
+        optionBar.add(clearAllText);
+    }
+
+    private void clearAllTextFields() {
+        firstNameText.setText("");
+        lastNameText.setText("");
+        checkNumberText.setText("");
+        locationText.setText("");
+        idText.setText("");
+        date1Text.setText("");
+        date2Text.setText("");
+        moneyText.setText("");
+    }
+
     private void queryDatabase(String table) {
+        // declare new variables for presenting queried data with
+        String[] cols;
+        JTable tablej;
+        JFrame frame1;
+
         // remove all the statements previously added to the lists
         sqlStatements.removeAll(sqlStatements);
         comparisonOperators.removeAll(comparisonOperators);
@@ -274,18 +309,54 @@ public class SelectPage extends JFrame implements ActionListener {
         addLocationStatement();
         addCommonStatements(table);
 
+        // get all the columns from the current table
+        cols = getAllCols(table);
+
         // getQueriedData method stopped working suddenly...
         selectData = new SelectData("donations.db", table, sqlStatements, comparisonOperators, columnsNeeded);
+        selectData.executeSelectQuery();
+        String[] data = selectData.returnQuery(); //new String[selectData.returnQuery().length];
 
-        // add the data to a new layout, so it can be presented nicely to the user
-        presentData.setFont(new Font("Times New Roman", Font.PLAIN, 16));
-        presentData.setText("<html>" + String.valueOf(selectData.executeSelectQuery()).replaceAll("<","&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br/>") + "</html>");
+        // create a new Jframe for the search results
+        frame1 = new JFrame("Database Search Result");
+        frame1.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame1.setLayout(new BorderLayout());
+        // create a new table model to store rows of data
+        DefaultTableModel model = new DefaultTableModel();
+        model.setColumnIdentifiers(cols);
+        // create a new jtable and automatically have it resize itself
+        tablej = new JTable();
+        tablej.setModel(model);
+        tablej.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        tablej.setFillsViewportHeight(true);
+        JScrollPane scroll = new JScrollPane(tablej);
+        scroll.setHorizontalScrollBarPolicy(
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scroll.setVerticalScrollBarPolicy(
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
-        // add the sql results to the results panel and then revalidate and repaint the page
-        showResults.add(presentData);
-        this.revalidate();
-        this.repaint();
-        //System.out.println("my data "  + selectData);
+        // loop through the queried data
+        for(String i: data) {
+            if(table.equals("cashDonations")) {
+                model.addRow(new Object[]{i.split(" ")[0],i.split(" ")[1],i.split(" ")[2]});
+            }
+            else if (table.equals("checkDonations")) {
+                model.addRow(new Object[]{i.split(" ")[0], i.split(" ")[1], i.split(" ")[2],
+                        i.split(" ")[3], i.split(" ")[4], i.split(" ")[5]});
+            }
+            else if(table.equals("flightInfo")) {
+                model.addRow(new Object[]{i.split(" ")[0], i.split(" ")[1], i.split(" ")[2],
+                        i.split(" ")[3], i.split(" ")[4]});
+            }
+            else if(table.equals("rentedBuilding")) {
+                model.addRow(new Object[]{i.split(" ")[0], i.split(" ")[1], i.split(" ")[2],
+                        i.split(" ")[3], i.split(" ")[4]});
+            }
+        }
+
+        frame1.add(scroll);
+        frame1.setVisible(true);
+        frame1.setSize(400, 300);
     }
     private void createNameFields() {
 
@@ -326,7 +397,7 @@ public class SelectPage extends JFrame implements ActionListener {
         check.setFont(new Font("Times New Roman", Font.PLAIN, 14));
         check.setForeground(Color.WHITE);
         // adjust text field for check and add to option bar
-        checkNumberText.setPreferredSize(new Dimension(100, 20));
+        checkNumberText.setPreferredSize(new Dimension(50, 20));
         checkNumberText.setFont(new Font("Times New Roman", Font.PLAIN, 12));
         optionBar.add(check);
         optionBar.add(checkNumberText);
@@ -358,11 +429,11 @@ public class SelectPage extends JFrame implements ActionListener {
         idLabel.setFont(new Font("Times New Roman", Font.PLAIN, 14));
         idLabel.setForeground(Color.WHITE);
 
-        date1Label.setText("Enter Year-Month-Date: ");
+        date1Label.setText("Year-Month-Day (2022-01-10): ");
         date1Label.setFont(new Font("Times New Roman", Font.PLAIN, 14));
         date1Label.setForeground(Color.WHITE);
 
-        date2Label.setText("Enter Year-Month-Date: ");
+        date2Label.setText("Enter 2nd Date to Search Between Dates: ");
         date2Label.setFont(new Font("Times New Roman", Font.PLAIN, 14));
         date2Label.setForeground(Color.WHITE);
 
@@ -373,22 +444,22 @@ public class SelectPage extends JFrame implements ActionListener {
     private void createCommonTextFields(){
         optionBar.add(idLabel);
 
-        idText.setPreferredSize(new Dimension(50, 20));
+        idText.setPreferredSize(new Dimension(40, 20));
         idText.setFont(new Font("Times New Roman", Font.PLAIN, 12));
         optionBar.add(idText);
 
         optionBar.add(date1Label);
-        date1Text.setPreferredSize(new Dimension(100, 20));
+        date1Text.setPreferredSize(new Dimension(70, 20));
         date1Text.setFont(new Font("Times New Roman", Font.PLAIN, 12));
         optionBar.add(date1Text);
 
         optionBar.add(date2Label);
-        date2Text.setPreferredSize(new Dimension(100, 20));
+        date2Text.setPreferredSize(new Dimension(70, 20));
         date2Text.setFont(new Font("Times New Roman", Font.PLAIN, 12));
         optionBar.add(date2Text);
 
         optionBar.add(moneyLabel);
-        moneyText.setPreferredSize(new Dimension(50, 20));
+        moneyText.setPreferredSize(new Dimension(60, 20));
         moneyText.setFont(new Font("Times New Roman", Font.PLAIN, 12));
         optionBar.add(moneyText);
     }
@@ -444,6 +515,9 @@ public class SelectPage extends JFrame implements ActionListener {
         if(e.getSource()==backToMenu) {
             this.dispose();
             new MenuPage();
+        }
+        if(e.getSource()==clearAllText) {
+            clearAllTextFields();
         }
     }
 
