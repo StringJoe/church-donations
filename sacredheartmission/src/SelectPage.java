@@ -317,46 +317,9 @@ public class SelectPage extends JFrame implements ActionListener {
         selectData.executeSelectQuery();
         String[] data = selectData.returnQuery(); //new String[selectData.returnQuery().length];
 
-        // create a new Jframe for the search results
-        frame1 = new JFrame("Database Search Result");
-        frame1.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame1.setLayout(new BorderLayout());
-        // create a new table model to store rows of data
-        DefaultTableModel model = new DefaultTableModel();
-        model.setColumnIdentifiers(cols);
-        // create a new jtable and automatically have it resize itself
-        tablej = new JTable();
-        tablej.setModel(model);
-        tablej.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-        tablej.setFillsViewportHeight(true);
-        JScrollPane scroll = new JScrollPane(tablej);
-        scroll.setHorizontalScrollBarPolicy(
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scroll.setVerticalScrollBarPolicy(
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        // display the retrieved sql data in different frame
+        new displayData(table, cols, data);
 
-        // loop through the queried data
-        for(String i: data) {
-            if(table.equals("cashDonations")) {
-                model.addRow(new Object[]{i.split(" ")[0],i.split(" ")[1],i.split(" ")[2]});
-            }
-            else if (table.equals("checkDonations")) {
-                model.addRow(new Object[]{i.split(" ")[0], i.split(" ")[1], i.split(" ")[2],
-                        i.split(" ")[3], i.split(" ")[4], i.split(" ")[5]});
-            }
-            else if(table.equals("flightInfo")) {
-                model.addRow(new Object[]{i.split(" ")[0], i.split(" ")[1], i.split(" ")[2],
-                        i.split(" ")[3], i.split(" ")[4]});
-            }
-            else if(table.equals("rentedBuilding")) {
-                model.addRow(new Object[]{i.split(" ")[0], i.split(" ")[1], i.split(" ")[2],
-                        i.split(" ")[3], i.split(" ")[4]});
-            }
-        }
-
-        frame1.add(scroll);
-        frame1.setVisible(true);
-        frame1.setSize(400, 300);
     }
     private void createNameFields() {
 
