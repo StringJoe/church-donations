@@ -9,6 +9,9 @@ import java.util.Map;
 public class SelectPage extends JFrame implements ActionListener {
     // declare selectData object for connecting to the database
     private SelectData selectData;
+
+    JButton deleteEntryButton = new JButton();
+    JButton insertEntryButton = new JButton();
     // create label to present sql results and create table model
     JLabel presentData = new JLabel();
     JButton backToMenu = new JButton();
@@ -25,15 +28,21 @@ public class SelectPage extends JFrame implements ActionListener {
     private String id, date1, date2, money;
     private String firstName, lastName;
 
-    JLabel idLabel = new JLabel();
-    JLabel date1Label = new JLabel();
-    JLabel date2Label = new JLabel();
-    JLabel moneyLabel = new JLabel();
-    JLabel first = new JLabel();
-    JLabel second = new JLabel();
-    JLabel check = new JLabel();
+    JLabel idLabel = new JLabel("<html>Enter ID:</html>", SwingConstants.CENTER);
+    JLabel date1Label = new JLabel("<html>Enter Year-Month-Day (e.g., 2022-01-10)</html>", SwingConstants.CENTER);
+    JLabel date2Label = new JLabel("<html>Enter Year-Month-Day (e.g., 2022-09-20)<br>Will search between both dates entered</html>", SwingConstants.CENTER);
+    JLabel moneyLabel = new JLabel("<html>Enter Donation or Cost Amount: </html>", SwingConstants.CENTER);
+    JPanel moneyPanel = new JPanel();
+    JRadioButton greaterSign = new JRadioButton(">");
+    JRadioButton lesserSign = new JRadioButton("<");
+    JRadioButton equalSign = new JRadioButton("=");
+    ButtonGroup signGroup = new ButtonGroup();
+    private String storeSign;
+    JLabel first = new JLabel("<html>Enter First Name:</html>", SwingConstants.CENTER);
+    JLabel second = new JLabel("<html>Enter Last Name:</html>", SwingConstants.CENTER);
+    JLabel check = new JLabel("<html>Enter Check Number:</html>", SwingConstants.CENTER);
 
-    JLabel building = new JLabel();
+    JLabel building = new JLabel("<html>Enter Building Address:</html>", SwingConstants.CENTER);
 
     private String checkNumber;
     private String location;
@@ -58,7 +67,7 @@ public class SelectPage extends JFrame implements ActionListener {
     private JComboBox tableBox;
 
     private JPanel optionBar  = new JPanel();
-    private JPanel showResults = new JPanel();
+    private JPanel textFields = new JPanel();
 
     // create array list to hold tables in database
     private ArrayList<String> tables = new ArrayList<String>();
@@ -104,6 +113,13 @@ public class SelectPage extends JFrame implements ActionListener {
         return tables;
     }
 
+    public void setSign(String sign) {
+        this.storeSign = sign;
+    }
+
+    public String getSign() {
+        return storeSign;
+    }
     public void setTables() {
         //System.out.println(tables.size());
         if(tables.size() > 0) {
@@ -129,15 +145,13 @@ public class SelectPage extends JFrame implements ActionListener {
     }
 
     SelectPage() {
-
-        backToMenu.setText("Return to Main Menu");
-        backToMenu.setSize(50,50);
-        backToMenu.addActionListener(this);
-        optionBar.add(backToMenu);
+        signGroup.add(greaterSign);
+        signGroup.add(lesserSign);
+        signGroup.add(equalSign);
         // set the tables in database for later use
         setTables();
         // set main options for the program: title, exit button, and layout to grid layout
-        this.setTitle("Sacred Heart Mission Financial Information: Selecting Data"); // sets title of the this
+        this.setTitle("Sacred Heart Mission Financial Information"); // sets title of the this
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // exit out of application when X is clicked
         this.setLayout(new GridLayout(2,1));
 
@@ -145,10 +159,13 @@ public class SelectPage extends JFrame implements ActionListener {
         optionBar.setBackground(new Color(158, 6, 24));
         optionBar.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 100));
 
-        // create the option bar so user can create select query
-        showResults.setBackground(Color.WHITE);
-        showResults.setLayout(new FlowLayout(FlowLayout.LEFT, 25, 10));
+        // add the text fields to the frame
+        textFields.setBackground(Color.lightGray);
+        textFields.setLayout(new GridLayout(7, 2));
 
+        // add panel for radio buttons and label to be added to same tile
+        moneyPanel.setBackground(Color.lightGray);
+        moneyPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 10));
 
         // create a dropdown menu of all available tables in database
         tableBox = new JComboBox(getTables().toArray());
@@ -156,16 +173,24 @@ public class SelectPage extends JFrame implements ActionListener {
         optionBar.add(tableBox);
         createSearchButton();
         createClearFieldsButton();
+        createDeleteButton();
         addCommonLabels();
         createCommonTextFields();
 
+        // add the action listeners for necessary components
         searchButton.addActionListener(this);
+        deleteEntryButton.addActionListener(this);
+        insertEntryButton.addActionListener(this);
         clearAllText.addActionListener(this);
+        // radio buttons
+        greaterSign.addActionListener(this);
+        lesserSign.addActionListener(this);
+        equalSign.addActionListener(this);
 
         // add list of query options to top of window
         this.add(optionBar);
-
-        this.add(new JScrollPane(showResults));
+        this.add(textFields);
+        //this.add(insertPanel);
         this.pack();
         this.setVisible(true); // makes this visible
         // set image of application to Sacred Heart
@@ -264,7 +289,14 @@ public class SelectPage extends JFrame implements ActionListener {
         if(!getMoney().equals("")) {
             sqlStatements.add(getMoney());
             columnsNeeded.add(col);
-            comparisonOperators.add("=");
+
+            if(getSign() != null) {
+                comparisonOperators.add(getSign());
+            }
+            else {
+                comparisonOperators.add("=");
+            }
+
         }
     }
 
@@ -273,6 +305,18 @@ public class SelectPage extends JFrame implements ActionListener {
         searchButton.setText("Search Database");
         searchButton.setSize(50,50);
         optionBar.add(searchButton);
+    }
+
+    private void createDeleteButton() {
+        deleteEntryButton.setText("Delete Entry by ID");
+        deleteEntryButton.setSize(50,50);
+        optionBar.add(deleteEntryButton);
+    }
+
+    private void createInsertButton() {
+        searchButton.setText("Insert Values Into Database");
+        searchButton.setSize(50,50);
+        optionBar.add(insertEntryButton);
     }
 
     private void createClearFieldsButton() {
@@ -295,8 +339,6 @@ public class SelectPage extends JFrame implements ActionListener {
     private void queryDatabase(String table) {
         // declare new variables for presenting queried data with
         String[] cols;
-        JTable tablej;
-        JFrame frame1;
 
         // remove all the statements previously added to the lists
         sqlStatements.removeAll(sqlStatements);
@@ -322,109 +364,132 @@ public class SelectPage extends JFrame implements ActionListener {
 
     }
     private void createNameFields() {
+        //first.setText("Enter First Name:");
+        first.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+        //first.setForeground(Color.WHITE);
 
-        first.setText("Enter First Name:");
-        first.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-        first.setForeground(Color.WHITE);
-
-
-        second.setText("Enter Last Name:");
-        second.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-        second.setForeground(Color.WHITE);
+        //second.setText("Enter Last Name:");
+        second.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+        //second.setForeground(Color.WHITE);
         // adjust text field for first name
-        firstNameText.setPreferredSize(new Dimension(125,20));
-        firstNameText.setFont(new Font("Times New Roman", Font.PLAIN, 12));
+        firstNameText.setPreferredSize(new Dimension(60,20));
+        firstNameText.setFont(new Font("Times New Roman", Font.PLAIN, 20));
 
         // adjust text field of last name
-        lastNameText.setPreferredSize(new Dimension(125,20));
-        lastNameText.setFont(new Font("Times New Roman", Font.PLAIN, 12));
+        lastNameText.setPreferredSize(new Dimension(60,20));
+        lastNameText.setFont(new Font("Times New Roman", Font.PLAIN, 20));
 
         // add both to the option bar at top of application
-        optionBar.add(first);
-        optionBar.add(firstNameText);
-        optionBar.add(second);
-        optionBar.add(lastNameText);
+        textFields.add(first);
+        textFields.add(firstNameText);
+        textFields.add(second);
+        textFields.add(lastNameText);
     }
     private void removeNameFields() {
         // reset text for names and remove from option bar so user cannot use them by accident
         firstNameText.setText("");
         lastNameText.setText("");
-        optionBar.remove(first);
-        optionBar.remove(second);
-        optionBar.remove(firstNameText);
-        optionBar.remove(lastNameText);
+        textFields.remove(first);
+        textFields.remove(second);
+        textFields.remove(firstNameText);
+        textFields.remove(lastNameText);
     }
 
     private void createCheckField() {
-        check.setText("Enter Check #:");
-        check.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-        check.setForeground(Color.WHITE);
+        //check.setText("Enter Check #:");
+        check.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+        //check.setForeground(Color.WHITE);
         // adjust text field for check and add to option bar
         checkNumberText.setPreferredSize(new Dimension(50, 20));
-        checkNumberText.setFont(new Font("Times New Roman", Font.PLAIN, 12));
-        optionBar.add(check);
-        optionBar.add(checkNumberText);
+        checkNumberText.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+        textFields.add(check);
+        textFields.add(checkNumberText);
     }
     private void removeCheckField() {
         // reset the text for the check text field and remove from option panel
-        optionBar.remove(check);
+        textFields.remove(check);
         checkNumberText.setText("");
-        optionBar.remove(checkNumberText);
+        textFields.remove(checkNumberText);
     }
 
     private void createLocField() {
-        building.setText("Enter Building Address:");
-        building.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-        building.setForeground(Color.WHITE);
+        //building.setText("Enter Building Address:");
+        building.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+        //building.setForeground(Color.WHITE);
         locationText.setPreferredSize(new Dimension(150, 20));
-        locationText.setFont(new Font("Times New Roman", Font.PLAIN, 12));
-        optionBar.add(building);
-        optionBar.add(locationText);
+        locationText.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+        textFields.add(building);
+        textFields.add(locationText);
     }
 
     private void removeLocField() {
-        optionBar.remove(building);
+        textFields.remove(building);
         locationText.setText("");
-        optionBar.remove(locationText);
+        textFields.remove(locationText);
     }
     private void addCommonLabels() {
-        idLabel.setText("Enter ID: ");
-        idLabel.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-        idLabel.setForeground(Color.WHITE);
+        //idLabel.setText("          Enter ID: ");
+        idLabel.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+        //idLabel.setForeground(Color.WHITE);
 
-        date1Label.setText("Year-Month-Day (2022-01-10): ");
-        date1Label.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-        date1Label.setForeground(Color.WHITE);
+        //date1Label.setText("          Year-Month-Day (2022-01-10): ");
+        date1Label.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+        //date1Label.setForeground(Color.WHITE);
 
-        date2Label.setText("Enter 2nd Date to Search Between Dates: ");
-        date2Label.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-        date2Label.setForeground(Color.WHITE);
+        //date2Label.setText("<html>&nbsp;Year-Month-Day (2022-09-20). <br>If entered will search range of dates (e.g. 2022/01/10-2022/09/20):</html>");
+        date2Label.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+        //date2Label.setForeground(Color.WHITE);
 
-        moneyLabel.setText("Dollar Amount: ");
-        moneyLabel.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-        moneyLabel.setForeground(Color.WHITE);
+        //moneyLabel.setText("<html>Dollar Amount <br/>sdfsd:</html>");
+        moneyLabel.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+        //moneyLabel.setForeground(Color.WHITE);
     }
     private void createCommonTextFields(){
-        optionBar.add(idLabel);
+        textFields.add(idLabel);
 
         idText.setPreferredSize(new Dimension(40, 20));
-        idText.setFont(new Font("Times New Roman", Font.PLAIN, 12));
-        optionBar.add(idText);
+        idText.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+        textFields.add(idText);
 
-        optionBar.add(date1Label);
+        textFields.add(date1Label);
         date1Text.setPreferredSize(new Dimension(70, 20));
-        date1Text.setFont(new Font("Times New Roman", Font.PLAIN, 12));
-        optionBar.add(date1Text);
+        date1Text.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+        textFields.add(date1Text);
 
-        optionBar.add(date2Label);
+        textFields.add(date2Label);
         date2Text.setPreferredSize(new Dimension(70, 20));
-        date2Text.setFont(new Font("Times New Roman", Font.PLAIN, 12));
-        optionBar.add(date2Text);
+        date2Text.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+        textFields.add(date2Text);
 
-        optionBar.add(moneyLabel);
+        // add the money label to the new panel
+        moneyPanel.add(moneyLabel);
+
+        // set the background color
+        greaterSign.setBackground(Color.lightGray);
+        lesserSign.setBackground(Color.lightGray);
+        equalSign.setBackground(Color.lightGray);
+
+        // add the new radio buttons
+        moneyPanel.add(greaterSign);
+        moneyPanel.add(lesserSign);
+        moneyPanel.add(equalSign);
+
+        // add new panel to text fields group
+        textFields.add(moneyPanel);
+
+        // set the prefered size and font of the money text field
         moneyText.setPreferredSize(new Dimension(60, 20));
-        moneyText.setFont(new Font("Times New Roman", Font.PLAIN, 12));
-        optionBar.add(moneyText);
+        moneyText.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+        textFields.add(moneyText);
+    }
+
+    private void deleteData() {
+        setId(idText.getText());
+        // get the id if not empty
+        if(!getId().equals("")) {
+            DeleteData delete = new DeleteData(Integer.parseInt(getId()), tableBox.getSelectedItem().toString(), "donations.db");
+            delete.deleteData();
+        }
     }
 
     @Override
@@ -481,6 +546,20 @@ public class SelectPage extends JFrame implements ActionListener {
         }
         if(e.getSource()==clearAllText) {
             clearAllTextFields();
+        }
+
+        if(e.getSource()==greaterSign) {
+            setSign(">");
+        }
+        if(e.getSource()==lesserSign) {
+            setSign("<");
+        }
+        if(e.getSource()==equalSign) {
+            setSign("=");
+        }
+
+        if(e.getSource()==deleteEntryButton) {
+            deleteData();
         }
     }
 
