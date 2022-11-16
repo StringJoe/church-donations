@@ -2,6 +2,7 @@
   <library name="sqlite-jdbc-3.39.3.0">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/../../sqlite-jdbc-3.39.3.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../opencsv-5.7.1.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

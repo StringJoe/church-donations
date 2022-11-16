@@ -29,8 +29,10 @@ public class displayData extends JFrame {
         scroll.setVerticalScrollBarPolicy(
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
+
         // loop through the queried data
         for(String i: sqlData) {
+            // display the data based on what table is being accessed by the user
             if(table.equals("cashDonations")) {
                 model.addRow(new Object[]{i.split("/")[0],i.split("/")[1],i.split("/")[2]});
             }

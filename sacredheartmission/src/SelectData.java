@@ -172,26 +172,20 @@ public class SelectData {
                             createSentence += "$" + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + "/";
                             temp += "$" + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + "/";
                             continue;
-                            // createSentence += GrabTableData.grabTableData().get(getTable()).get(i).toUpperCase() + ": #" + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + " | ";
                         }
                         createSentence += insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + "/";
                         temp += insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + "/";
-                        //createSentence += GrabTableData.grabTableData().get(getTable()).get(i).toUpperCase() + ": " + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + " | ";
-
-                        //temp += insertResults.getString(String.format("%s", GrabTableData.grabTableData().get(getTable()).get(i))) + "\t\t";
                     }
                     else {
                         if (GrabTableData.grabTableData().get(getTable()).get(i).equals("checkNumber")) {
                             createSentence += "#" + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + "/";
                             temp += "#" + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + "/";
                             continue;
-                            // createSentence += GrabTableData.grabTableData().get(getTable()).get(i).toUpperCase() + ": #" + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + " | ";
+
                         }
-                        createSentence += "$" + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + "/";
-                        temp += "$" + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + "/";
-                        //createSentence += GrabTableData.grabTableData().get(getTable()).get(i).toUpperCase() + ": " + "$" + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i));
-                        //temp += insertResults.getString(String.format("%s", GrabTableData.grabTableData().get(getTable()).get(i))) + "\t\t";
-                        temp  += insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i));
+                        createSentence += "$" + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i));
+                        temp += "$" + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i));
+
                     }
                 }
                 listOfData.add(temp);

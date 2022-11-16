@@ -3,6 +3,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -23,6 +25,7 @@ public class SelectPage extends JFrame implements ActionListener {
 
     // create a search button for when user wants to get results
     JButton searchButton = new JButton();
+    JButton writeFileButton = new JButton();
 
     // create variables for database values and store them
     private String id, date1, date2, money;
@@ -172,6 +175,7 @@ public class SelectPage extends JFrame implements ActionListener {
         tableBox.addActionListener(this);
         optionBar.add(tableBox);
         createSearchButton();
+        createWriteToFileButton();
         createClearFieldsButton();
         createDeleteButton();
         createInsertButton();
@@ -180,6 +184,7 @@ public class SelectPage extends JFrame implements ActionListener {
 
         // add the action listeners for necessary components
         searchButton.addActionListener(this);
+        writeFileButton.addActionListener(this);
         deleteEntryButton.addActionListener(this);
         insertEntryButton.addActionListener(this);
         clearAllText.addActionListener(this);
@@ -308,6 +313,12 @@ public class SelectPage extends JFrame implements ActionListener {
         optionBar.add(searchButton);
     }
 
+    private void createWriteToFileButton() {
+        writeFileButton.setText("Write Data To File");
+        writeFileButton.setSize(50,50);
+        optionBar.add(writeFileButton);
+    }
+
     private void createDeleteButton() {
         deleteEntryButton.setText("Delete Entry by ID");
         deleteEntryButton.setSize(50,50);
@@ -359,11 +370,31 @@ public class SelectPage extends JFrame implements ActionListener {
         selectData = new SelectData("donations.db", table, sqlStatements, comparisonOperators, columnsNeeded);
         selectData.executeSelectQuery();
         String[] data = selectData.returnQuery(); //new String[selectData.returnQuery().length];
-
+        System.out.println(selectData.getData());
         // display the retrieved sql data in different frame
         new displayData(table, cols, data);
 
     }
+
+    private void writeToFile() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime now = LocalDateTime.now();
+
+        if(!getDate1().equals("")){
+            WriteToFile.writeDataLineByLine(getDate1() + "_" + tableBox.getSelectedItem().toString(),
+                    getAllCols(tableBox.getSelectedItem().toString()), selectData.returnQuery());
+        }
+        if(!getDate2().equals("")){
+            WriteToFile.writeDataLineByLine(getDate2() + "_" + tableBox.getSelectedItem().toString(),
+                    getAllCols(tableBox.getSelectedItem().toString()), selectData.returnQuery());
+        }
+        else {
+            WriteToFile.writeDataLineByLine(dtf.format(now) + "_" + tableBox.getSelectedItem().toString(),
+                    getAllCols(tableBox.getSelectedItem().toString()), selectData.returnQuery());
+        }
+
+    }
+
     private void createNameFields() {
         //first.setText("Enter First Name:");
         first.setFont(new Font("Times New Roman", Font.PLAIN, 20));
@@ -478,7 +509,7 @@ public class SelectPage extends JFrame implements ActionListener {
         // add new panel to text fields group
         textFields.add(moneyPanel);
 
-        // set the prefered size and font of the money text field
+        // set the preferred size and font of the money text field
         moneyText.setPreferredSize(new Dimension(60, 20));
         moneyText.setFont(new Font("Times New Roman", Font.PLAIN, 20));
         textFields.add(moneyText);
@@ -565,6 +596,10 @@ public class SelectPage extends JFrame implements ActionListener {
 
         if(e.getSource()==insertEntryButton) {
             new InsertPage();
+        }
+
+        if(e.getSource()==writeFileButton) {
+            writeToFile();
         }
     }
 
