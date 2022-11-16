@@ -174,6 +174,7 @@ public class SelectPage extends JFrame implements ActionListener {
         createSearchButton();
         createClearFieldsButton();
         createDeleteButton();
+        createInsertButton();
         addCommonLabels();
         createCommonTextFields();
 
@@ -314,8 +315,8 @@ public class SelectPage extends JFrame implements ActionListener {
     }
 
     private void createInsertButton() {
-        searchButton.setText("Insert Values Into Database");
-        searchButton.setSize(50,50);
+        insertEntryButton.setText("Enter Data");
+        insertEntryButton.setSize(50,50);
         optionBar.add(insertEntryButton);
     }
 
@@ -560,6 +561,10 @@ public class SelectPage extends JFrame implements ActionListener {
 
         if(e.getSource()==deleteEntryButton) {
             deleteData();
+        }
+
+        if(e.getSource()==insertEntryButton) {
+            new InsertPage();
         }
     }
 

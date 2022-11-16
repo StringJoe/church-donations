@@ -32,19 +32,19 @@ public class displayData extends JFrame {
         // loop through the queried data
         for(String i: sqlData) {
             if(table.equals("cashDonations")) {
-                model.addRow(new Object[]{i.split(" ")[0],i.split(" ")[1],i.split(" ")[2]});
+                model.addRow(new Object[]{i.split("/")[0],i.split("/")[1],i.split("/")[2]});
             }
             else if (table.equals("checkDonations")) {
-                model.addRow(new Object[]{i.split(" ")[0], i.split(" ")[1], i.split(" ")[2],
-                        i.split(" ")[3], i.split(" ")[4], i.split(" ")[5]});
+                model.addRow(new Object[]{i.split("/")[0], i.split("/")[1], i.split("/")[2],
+                        i.split("/")[3], i.split("/")[4], i.split("/")[5]});
             }
             else if(table.equals("flightInfo")) {
-                model.addRow(new Object[]{i.split(" ")[0], i.split(" ")[1], i.split(" ")[2],
-                        i.split(" ")[3], i.split(" ")[4]});
+                model.addRow(new Object[]{i.split("/")[0], i.split("/")[1], i.split("/")[2],
+                        i.split("/")[3], i.split("/")[4]});
             }
             else if(table.equals("rentedBuilding")) {
-                model.addRow(new Object[]{i.split(" ")[0], i.split(" ")[1], i.split(" ")[2],
-                        i.split(" ")[3], i.split(" ")[4]});
+                model.addRow(new Object[]{i.split("/")[0], i.split("/")[1], i.split("/")[2],
+                        i.split("/")[3], i.split("/")[4]});
             }
         }
 

@@ -27,23 +27,23 @@ public class CreateDatabase {
             // create the checkDonations table
             statement.execute("CREATE TABLE IF NOT EXISTS " +
                     "checkDonations (id INTEGER PRIMARY KEY, firstName TEXT, " +
-                    "lastName TEXT, date TEXT, checkNumber STRING, donationAmount INTEGER)");
+                    "lastName TEXT, date TEXT, donationAmount INTEGER, checkNumber STRING)");
 
             /* test values */
             statement.execute("INSERT INTO checkDonations (id, firstName, lastName, " +
-                    "date, checkNumber, donationAmount) " +
+                    "date, donationAmount, checkNumber) " +
                     "VALUES(NULL, 'John', 'Hammond', '2022-09-28', " +
-                    "'1234', 50)");
+                    "50, '1234')");
 
             statement.execute("INSERT INTO checkDonations (id, firstName, lastName, " +
-                    "date, checkNumber, donationAmount) " +
+                    "date, donationAmount, checkNumber) " +
                     "VALUES(NULL, 'Samy', 'Kamkar', '2022-10-05', " +
-                    "'4321', 80)");
+                    "80, '4321')");
 
             statement.execute("INSERT INTO checkDonations (id, firstName, lastName, " +
-                    "date, checkNumber, donationAmount) " +
+                    "date, donationAmount, checkNumber) " +
                     "VALUES(NULL, 'Kevin', 'Mitnick', '2022-10-12', " +
-                    "'6789', 5)");
+                    "5, '6789')");
 
             // create cashDonations table
             statement.execute("CREATE TABLE IF NOT EXISTS " +

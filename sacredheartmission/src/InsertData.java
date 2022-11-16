@@ -75,7 +75,7 @@ public class InsertData {
 
         // finish beginning query values
         query += ") VALUES(NULL, ";
-
+        //System.out.println("column query " + query);
         // get length of list that needs to be inserted
         listLength = getDataToInsert().size();
 
@@ -92,13 +92,14 @@ public class InsertData {
         // add last parentheses to query
         query += ")";
 
+        //System.out.println("full query " + query);
         //System.out.println(query);
         return query;
     }
 
     public void executeQuery() {
         // start creating the query to the database
-        String createSentence = "";
+        String createSentence = "(";
         int listLength = GrabTableData.grabTableData().get(getTable()).size();
 
         try {
@@ -116,13 +117,14 @@ public class InsertData {
             // after getting result set, loop through data using known columns retrieved from linked hash map
             for(int i = 0; i < listLength; i++) {
                 if ((i+1) != listLength) {
-                    createSentence += insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + "|";
+                    createSentence += insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + " | ";
                 }
                 else {
                     createSentence += insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i));
                 }
             }
 
+            createSentence += ")";
             // set the selected data
             setSelectData(createSentence);
 
@@ -137,6 +139,6 @@ public class InsertData {
 
     @Override
     public String toString() {
-        return "Data added:\n" + getSelectData();
+        return getSelectData();
     }
 }
