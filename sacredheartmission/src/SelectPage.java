@@ -126,7 +126,7 @@ public class SelectPage extends JFrame implements ActionListener {
     public void setTables() {
         //System.out.println(tables.size());
         if(tables.size() > 0) {
-            System.out.println("REMOVE");
+
             tables.removeAll(tables);
         }
 
@@ -320,7 +320,7 @@ public class SelectPage extends JFrame implements ActionListener {
     }
 
     private void createDeleteButton() {
-        deleteEntryButton.setText("Delete Entry by ID");
+        deleteEntryButton.setText("Delete Entry Page");
         deleteEntryButton.setSize(50,50);
         optionBar.add(deleteEntryButton);
     }
@@ -370,16 +370,19 @@ public class SelectPage extends JFrame implements ActionListener {
         selectData = new SelectData("donations.db", table, sqlStatements, comparisonOperators, columnsNeeded);
         selectData.executeSelectQuery();
         String[] data = selectData.returnQuery(); //new String[selectData.returnQuery().length];
-        System.out.println(selectData.getData());
+        //System.out.println(selectData.getData());
         // display the retrieved sql data in different frame
         new displayData(table, cols, data);
 
     }
 
     private void writeToFile() {
+        // get the current time in case user does not specify one
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDateTime now = LocalDateTime.now();
 
+        // check if user specified a date in either box and use that as part of file name
+        // use current date if there is none specified
         if(!getDate1().equals("")){
             WriteToFile.writeDataLineByLine(getDate1() + "_" + tableBox.getSelectedItem().toString(),
                     getAllCols(tableBox.getSelectedItem().toString()), selectData.returnQuery());
@@ -515,15 +518,6 @@ public class SelectPage extends JFrame implements ActionListener {
         textFields.add(moneyText);
     }
 
-    private void deleteData() {
-        setId(idText.getText());
-        // get the id if not empty
-        if(!getId().equals("")) {
-            DeleteData delete = new DeleteData(Integer.parseInt(getId()), tableBox.getSelectedItem().toString(), "donations.db");
-            delete.deleteData();
-        }
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==tableBox) {
@@ -591,7 +585,8 @@ public class SelectPage extends JFrame implements ActionListener {
         }
 
         if(e.getSource()==deleteEntryButton) {
-            deleteData();
+            //deleteData();
+            new DeletePage();
         }
 
         if(e.getSource()==insertEntryButton) {

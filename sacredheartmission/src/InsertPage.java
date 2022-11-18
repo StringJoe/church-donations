@@ -34,7 +34,7 @@ public class InsertPage extends JFrame implements ActionListener {
     // create a insert button for when user wants to get results
     JButton insertButton = new JButton();
 
-    private String id, date, money;
+    private String date, money;
     private String firstName, lastName;
 
     private String checkNumber;
@@ -77,7 +77,6 @@ public class InsertPage extends JFrame implements ActionListener {
     // get tables from GrabTableData class
     public void setTables() {
         if(tables.size() > 0) {
-            System.out.println("REMOVE");
             tables.removeAll(tables);
         }
 

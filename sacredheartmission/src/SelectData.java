@@ -178,8 +178,8 @@ public class SelectData {
                     }
                     else {
                         if (GrabTableData.grabTableData().get(getTable()).get(i).equals("checkNumber")) {
-                            createSentence += "#" + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + "/";
-                            temp += "#" + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + "/";
+                            createSentence += "#" + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i));
+                            temp += "#" + insertResults.getString(GrabTableData.grabTableData().get(getTable()).get(i));
                             continue;
 
                         }

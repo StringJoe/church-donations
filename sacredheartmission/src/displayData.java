@@ -1,7 +1,6 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionListener;
 
 public class displayData extends JFrame {
     private JTable sqlTable;
@@ -46,13 +45,14 @@ public class displayData extends JFrame {
             }
             else if(table.equals("rentedBuilding")) {
                 model.addRow(new Object[]{i.split("/")[0], i.split("/")[1], i.split("/")[2],
-                        i.split("/")[3], i.split("/")[4]});
+                        i.split("/")[3]});
             }
         }
 
         // make the new frame visible to the user
         this.add(scroll);
+        this.pack();
         this.setVisible(true);
-        this.setSize(800, 700);
+
     }
 }
