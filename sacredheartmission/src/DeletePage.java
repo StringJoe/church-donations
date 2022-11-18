@@ -111,10 +111,8 @@ public class DeletePage extends JFrame implements ActionListener {
     }
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource()==tableBox) {
-            setTable(tableBox.getSelectedItem().toString());
-        }
         if(e.getSource()==deleteEntryButton) {
+            setTable(tableBox.getSelectedItem().toString());
             deleteData();
         }
     }

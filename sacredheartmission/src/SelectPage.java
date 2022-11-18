@@ -178,7 +178,7 @@ public class SelectPage extends JFrame implements ActionListener {
         createWriteToFileButton();
         createClearFieldsButton();
         createDeleteButton();
-        createInsertButton();
+        //createInsertButton();
         addCommonLabels();
         createCommonTextFields();
 
@@ -320,7 +320,7 @@ public class SelectPage extends JFrame implements ActionListener {
     }
 
     private void createDeleteButton() {
-        deleteEntryButton.setText("Delete Entry Page");
+        deleteEntryButton.setText("Delete Page");
         deleteEntryButton.setSize(50,50);
         optionBar.add(deleteEntryButton);
     }
