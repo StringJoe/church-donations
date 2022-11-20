@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class SelectPage extends JFrame implements ActionListener {
+    // create variables so user can enter a file name
+    JLabel enterFilename = new JLabel("Enter Filename:");
+    JTextField textFilename = new JTextField();
+
     // declare selectData object for connecting to the database
     private SelectData selectData;
 
@@ -175,10 +179,11 @@ public class SelectPage extends JFrame implements ActionListener {
         tableBox.addActionListener(this);
         optionBar.add(tableBox);
         createSearchButton();
+        createFileNamingText();
         createWriteToFileButton();
         createClearFieldsButton();
         createDeleteButton();
-        //createInsertButton();
+        createInsertButton();
         addCommonLabels();
         createCommonTextFields();
 
@@ -313,6 +318,17 @@ public class SelectPage extends JFrame implements ActionListener {
         optionBar.add(searchButton);
     }
 
+    private void createFileNamingText() {
+        enterFilename.setForeground(Color.WHITE);
+        enterFilename.setFont(new Font("Times New Roman", Font.PLAIN, 16));
+
+        textFilename.setPreferredSize(new Dimension(100, 20));
+        textFilename.setFont(new Font("Times New Roman", Font.PLAIN, 16));
+
+        optionBar.add(enterFilename);
+        optionBar.add(textFilename);
+    }
+
     private void createWriteToFileButton() {
         writeFileButton.setText("Write Data To File");
         writeFileButton.setSize(50,50);
@@ -326,7 +342,7 @@ public class SelectPage extends JFrame implements ActionListener {
     }
 
     private void createInsertButton() {
-        insertEntryButton.setText("Enter Data");
+        insertEntryButton.setText("Insert Page");
         insertEntryButton.setSize(50,50);
         optionBar.add(insertEntryButton);
     }
@@ -383,6 +399,7 @@ public class SelectPage extends JFrame implements ActionListener {
 
         // check if user specified a date in either box and use that as part of file name
         // use current date if there is none specified
+        /*
         if(!getDate1().equals("")){
             WriteToFile.writeDataLineByLine(getDate1() + "_" + tableBox.getSelectedItem().toString(),
                     getAllCols(tableBox.getSelectedItem().toString()), selectData.returnQuery());
@@ -390,6 +407,10 @@ public class SelectPage extends JFrame implements ActionListener {
         if(!getDate2().equals("")){
             WriteToFile.writeDataLineByLine(getDate2() + "_" + tableBox.getSelectedItem().toString(),
                     getAllCols(tableBox.getSelectedItem().toString()), selectData.returnQuery());
+        }
+        */
+        if(!textFilename.getText().equals("")) {
+            WriteToFile.writeDataLineByLine(textFilename.getText(), getAllCols(tableBox.getSelectedItem().toString()), selectData.returnQuery());
         }
         else {
             WriteToFile.writeDataLineByLine(dtf.format(now) + "_" + tableBox.getSelectedItem().toString(),
