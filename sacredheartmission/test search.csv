@@ -1,0 +1,4 @@
+id,firstName,lastName,date,donationAmount,checkNumber
+1,John,Hammond,9/28/2022,$50 ,#1234
+2,Samy,Kamkar,10/5/2022,$80 ,#4321
+3,Kevin,Mitnick,10/12/2022,$5 ,#6789

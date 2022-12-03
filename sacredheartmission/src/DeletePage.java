@@ -25,6 +25,8 @@ public class DeletePage extends JFrame implements ActionListener {
     private ArrayList<String> tables = new ArrayList<String>();
     private JComboBox tableBox;
 
+    private JLabel enteredData = new JLabel();
+
     public String getTable() {
         return table;
     }
@@ -81,6 +83,11 @@ public class DeletePage extends JFrame implements ActionListener {
         this.add(userOptions);
         this.pack();
         this.setVisible(true);
+
+        // set image of application to Sacred Heart
+        ImageIcon image = new ImageIcon("sacred-heart.png"); // creates an image icon
+        this.setIconImage(image.getImage()); // sets the image icon of the this to our new image
+
     }
 
     // add the necessary constraints to the delete button
@@ -89,6 +96,10 @@ public class DeletePage extends JFrame implements ActionListener {
         deleteEntryButton.setFont(new Font("Times New Roman", Font.PLAIN, 20));
         deleteEntryButton.setPreferredSize(new Dimension(200, 50));
         deleteButtonPanel.add(deleteEntryButton);
+
+        enteredData.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+        enteredData.setForeground(Color.WHITE);
+        deleteButtonPanel.add(enteredData);
     }
 
 
@@ -106,7 +117,7 @@ public class DeletePage extends JFrame implements ActionListener {
         if(!idTextField.getText().equals("")) {
             DeleteData delete = new DeleteData(Integer.parseInt(idTextField.getText()), getTable(), "donations.db");
             delete.deleteData();
-            //System.out.println(delete);
+            enteredData.setText(String.valueOf(delete));
         }
     }
     @Override

@@ -80,7 +80,7 @@ public class DeleteData {
             // after getting result set, loop through data using known columns retrieved from linked hash map
             for(int i = 0; i < GrabTableData.grabTableData().get(getTable()).size(); i++) {
                 if ((i+1) != GrabTableData.grabTableData().get(getTable()).size()) {
-                    createSentence += deleteResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + "|";
+                    createSentence += deleteResults.getString(GrabTableData.grabTableData().get(getTable()).get(i)) + " | ";
                 }
                 else {
                     createSentence += deleteResults.getString(GrabTableData.grabTableData().get(getTable()).get(i));
@@ -102,6 +102,6 @@ public class DeleteData {
 
     @Override
     public String toString() {
-        return "Data deleted:\n" + getDeletedData();
+        return "Data deleted: \n" + getDeletedData();
     }
 }
